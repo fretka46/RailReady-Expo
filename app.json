@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "RailReady",
-    "slug": "RailReady",
+    "slug": "railready-expo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -31,6 +31,15 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "5b98deab-2fb8-405c-8862-c763701df8e8"
+      }
+    },
+    "owner": "fretka46"
   }
 }
