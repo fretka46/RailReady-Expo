@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { StyleSheet, TextInput, Linking, TouchableOpacity } from 'react-native';
 import { Text, View } from '@/components/Themed';
+import { useSettings } from '@/context/SettingsContext';
 
 export default function TabTwoScreen() {
-  const [inputValue, setInputValue] = useState('');
+  const { settings, setSettings } = useSettings();
 
   const handleLinkPress = () => {
     Linking.openURL('https://api.golemio.cz/api-keys/');
+  };
+
+  const handleInputChange = (key: keyof typeof settings, value: string) => {
+    setSettings(prevSettings => ({
+      ...prevSettings,
+      [key]: value,
+    }));
   };
 
   return (
@@ -16,8 +24,8 @@ export default function TabTwoScreen() {
         <Text style={styles.labelDesc}>Case-Sensitive název stanice</Text>
         <TextInput
           style={styles.input}
-          value={inputValue}
-          onChangeText={setInputValue}
+          value={settings.stationName}
+          onChangeText={(value) => handleInputChange("stationName", value)}
           placeholder="Praha-Běchovice střed"
           placeholderTextColor="#999"
         />
@@ -26,8 +34,8 @@ export default function TabTwoScreen() {
         <Text style={styles.labelDesc}>Stejné názvy jako mají vlaky na svých směrových cedulích, oddělené čárkou</Text>
         <TextInput
           style={styles.input}
-          value={inputValue}
-          onChangeText={setInputValue}
+          value={settings.destinationNames}
+          onChangeText={(value) => handleInputChange('destinationNames', value)}
           placeholder="Praha Masarykovo nádr., Praha hl n., Karlštejn"
           placeholderTextColor="#999"
         />
@@ -41,8 +49,8 @@ export default function TabTwoScreen() {
         </Text>
         <TextInput
           style={styles.input}
-          value={inputValue}
-          onChangeText={setInputValue}
+          value={settings.apiKey}
+          onChangeText={(value) => handleInputChange('apiKey', value)}
           placeholder="Enter key here"
           placeholderTextColor="#999"
         />
