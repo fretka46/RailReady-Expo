@@ -2,13 +2,10 @@ import React from 'react';
 import { StyleSheet, TextInput, Linking, TouchableOpacity } from 'react-native';
 import { Text, View } from '@/components/Themed';
 import { useSettings } from '@/context/SettingsContext';
+import { ExternalLink } from '@/components/ExternalLink';
 
 export default function TabTwoScreen() {
   const { settings, setSettings } = useSettings();
-
-  const handleLinkPress = () => {
-    Linking.openURL('https://api.golemio.cz/api-keys/');
-  };
 
   const handleInputChange = (key: keyof typeof settings, value: string) => {
     setSettings(prevSettings => ({
@@ -42,10 +39,10 @@ export default function TabTwoScreen() {
 
         <Text style={styles.label}>Golemio API key</Text>
         <Text style={styles.labelDesc}>
-          Vlastní klíč můžete získat zde:
-          <TouchableOpacity onPress={handleLinkPress}>
-            <Text style={styles.link}>https://api.golemio.cz/api-keys/</Text>
-          </TouchableOpacity>
+          Vlastní klíč můžete získat zde: 
+          <ExternalLink href="https://api.golemio.cz/api-keys/" style={styles.link}>
+            <Text style={styles.link}>api.golemio.cz/api-keys/</Text>
+          </ExternalLink>
         </Text>
         <TextInput
           style={styles.input}
