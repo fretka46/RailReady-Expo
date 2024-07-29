@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Animated } from 'react-native';
 
 export default function TabOneScreen() {
   const [time, setTime] = useState(600); // 10 minutes in seconds
-  const animatedValue = new Animated.Value(time);
+  const animatedValue = useRef(new Animated.Value(time)).current;
+  const intervalRef = useRef<null | NodeJS.Timeout>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       setTime(prevTime => {
         if (prevTime > 0) {
           animatedValue.setValue(prevTime - 1);
           return prevTime - 1;
         } else {
-          clearInterval(interval);
+          clearInterval(intervalRef.current as NodeJS.Timeout);
           return 0;
         }
       });
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, []);
+    return () => clearInterval(intervalRef.current as NodeJS.Timeout);
+  }, [animatedValue]);
 
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
