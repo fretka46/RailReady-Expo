@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Animated } from 'react-native';
 import Svg, { Circle as SvgCircle } from 'react-native-svg';
+import { useSettings } from '@/context/SettingsContext';
 
 const AnimatedCircle = Animated.createAnimatedComponent(SvgCircle);
 
 export default function TabOneScreen() {
+  // Settings interface
+  const { settings } = useSettings();
+
   // Main time countdown logic
   const [time, setTime] = useState(700);
 
@@ -25,7 +29,7 @@ export default function TabOneScreen() {
     }, 1000);
 
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
-  }, [animatedValue]);
+  }, [animatedValue, settings]);
 
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
@@ -48,10 +52,7 @@ export default function TabOneScreen() {
           strokeWidth="15"
           fill="none"
           strokeDasharray={`${circumference} ${circumference}`}
-
-          // Time before the progress bar starts filling
-          strokeDashoffset={time <= 600 ? strokeDashoffset : circumference}
-          // Rotate the circle to start from the top
+          strokeDashoffset={time <= settings.progressbarOffset ? strokeDashoffset : circumference}
           transform={`rotate(-90 100 100)`}
         />
       </Svg>

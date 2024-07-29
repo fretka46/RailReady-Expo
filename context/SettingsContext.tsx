@@ -3,9 +3,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Define the Settings interface
 interface Settings {
+  // Route settings
   stationName: string;
   destinationNames: string;
   apiKey: string;
+
+  // App settings
+  progressbarOffset: number;
 }
 
 // Define the context type
@@ -25,9 +29,13 @@ interface SettingsProviderProps {
 // Create the SettingsProvider component
 export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) => {
   const [settings, setSettings] = useState<Settings>({
+    // Route settings
     stationName: '',
     destinationNames: '',
     apiKey: '',
+
+    // App settings
+    progressbarOffset: 600,
   });
 
   // Load settings from AsyncStorage when the component mounts
@@ -36,7 +44,12 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
       try {
         const savedSettings = await AsyncStorage.getItem('settings');
         if (savedSettings) {
-          setSettings(JSON.parse(savedSettings));
+          const parsedSettings = JSON.parse(savedSettings);
+          console.log('Loaded settings:', parsedSettings); // Log loaded settings
+          setSettings((prevSettings) => ({
+            ...prevSettings,
+            ...parsedSettings,
+          }));
         }
       } catch (error) {
         console.error('Failed to load settings', error);
@@ -51,6 +64,7 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
     const saveSettings = async () => {
       try {
         await AsyncStorage.setItem('settings', JSON.stringify(settings));
+        console.log('Saved settings:', settings); // Log saved settings
       } catch (error) {
         console.error('Failed to save settings', error);
       }
