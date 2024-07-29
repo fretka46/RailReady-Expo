@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, View, Text, Animated } from 'react-native';
+import Svg, { Circle as SvgCircle } from 'react-native-svg';
+
+const AnimatedCircle = Animated.createAnimatedComponent(SvgCircle);
 
 export default function TabOneScreen() {
-  const [time, setTime] = useState(600); // 10 minutes in seconds
+  // Main time countdown logic
+  const [time, setTime] = useState(700);
+
   const animatedValue = useRef(new Animated.Value(time)).current;
   const intervalRef = useRef<null | NodeJS.Timeout>(null);
 
@@ -25,25 +30,31 @@ export default function TabOneScreen() {
   const minutes = Math.floor(time / 60);
   const seconds = time % 60;
 
-  const animatedCircleStyle = {
-    backgroundColor: 'red',
-    width: animatedValue.interpolate({
-      inputRange: [0, 600],
-      outputRange: [200, 0]
-    }),
-    height: animatedValue.interpolate({
-      inputRange: [0, 600],
-      outputRange: [200, 0]
-    }),
-    borderRadius: animatedValue.interpolate({
-      inputRange: [0, 600],
-      outputRange: [100, 0]
-    })
-  };
+  const radius = 80;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = animatedValue.interpolate({
+    inputRange: [0, 600],
+    outputRange: [0, circumference]
+  });
 
   return (
     <View style={styles.container}>
-      <Animated.View style={[styles.circle, animatedCircleStyle]} />
+      <Svg height="400" width="400" viewBox="0 0 200 200" style={styles.progressBar}>
+        <AnimatedCircle
+          cx="100"
+          cy="100"
+          r={radius}
+          stroke="red"
+          strokeWidth="15"
+          fill="none"
+          strokeDasharray={`${circumference} ${circumference}`}
+
+          // Time before the progress bar starts filling
+          strokeDashoffset={time <= 600 ? strokeDashoffset : circumference}
+          // Rotate the circle to start from the top
+          transform={`rotate(-90 100 100)`}
+        />
+      </Svg>
       <Text style={styles.title}>Train arrival in</Text>
       <Text style={styles.timeCounter}>
         {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')}
@@ -74,7 +85,7 @@ const styles = StyleSheet.create({
     height: 1,
     width: '80%',
   },
-  circle: {
+  progressBar: {
     position: 'absolute',
     zIndex: -1,
   },
