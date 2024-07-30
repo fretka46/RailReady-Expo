@@ -27,7 +27,7 @@ export default function TabOneScreen() {
         }
       });
     }, 1000);
-
+  
     return () => clearInterval(intervalRef.current as NodeJS.Timeout);
   }, [animatedValue, settings]);
 
@@ -37,7 +37,7 @@ export default function TabOneScreen() {
   const radius = 80;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = animatedValue.interpolate({
-    inputRange: [0, 600],
+    inputRange: [0, settings.progressbarOffset],
     outputRange: [0, circumference]
   });
 
