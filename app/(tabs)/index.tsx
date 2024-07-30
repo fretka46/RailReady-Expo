@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { StyleSheet, View, Text, Animated } from 'react-native';
+import { StyleSheet, View, Text, Animated, Easing } from 'react-native';
 import Svg, { Circle as SvgCircle } from 'react-native-svg';
 import { useSettings } from '@/context/SettingsContext';
 
@@ -10,7 +10,7 @@ export default function TabOneScreen() {
   const { settings } = useSettings();
 
   // Main time countdown logic
-  const [time, setTime] = useState(700);
+  const [time, setTime] = useState(600);
 
   const animatedValue = useRef(new Animated.Value(time)).current;
   const intervalRef = useRef<null | NodeJS.Timeout>(null);
@@ -19,7 +19,12 @@ export default function TabOneScreen() {
     intervalRef.current = setInterval(() => {
       setTime(prevTime => {
         if (prevTime > 0) {
-          animatedValue.setValue(prevTime - 1);
+          Animated.timing(animatedValue, {
+            toValue: prevTime - 1,
+            duration: 1000,
+            easing: Easing.linear,
+            useNativeDriver: false,
+          }).start();
           return prevTime - 1;
         } else {
           clearInterval(intervalRef.current as NodeJS.Timeout);
