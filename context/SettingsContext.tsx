@@ -10,6 +10,10 @@ interface Settings {
 
   // App settings
   progressbarOffset: number;
+  // notification times
+  notification1: number;
+  notification2: number;
+  notification3: number;
 }
 
 // Define the context type
@@ -36,6 +40,10 @@ export const SettingsProvider: React.FC<SettingsProviderProps> = ({ children }) 
 
     // App settings
     progressbarOffset: 600,
+    // notification times
+    notification1: 60,
+    notification2: 300,
+    notification3: 600,
   });
 
   // Load settings from AsyncStorage when the component mounts
