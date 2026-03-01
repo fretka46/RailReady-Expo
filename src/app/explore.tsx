@@ -2,17 +2,25 @@ import { ExternalLink } from "@/components/external-link";
 import { TextInput } from "@/components/textinput";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useSettings } from "@/context/settings-context";
 import { Image } from "expo-image";
 import { ScrollView, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ExploreScreen() {
+    const { settings, updateSetting, isLoading } = useSettings();
+
+    // Pokud se data načítají, můžeme zatím ukázat prázdnou obrazovku
+    if (isLoading) return null;
+
     return (
-        <ScrollView>
-            <ThemedView className="flex-1 items-center justify-center ">
-                <ThemedText className="text-4xl font-bold mb-4">
-                    RailReady
-                </ThemedText>
-                <ThemedText className="text-lg text-center px-4">
+          <SafeAreaView edges={["left", "right", "top"]} className="flex-1 bg-white dark:bg-black">
+            <ScrollView>
+                <ThemedView className="flex-1 items-center justify-center ">
+                    <ThemedText className="text-4xl font-bold mb-4">
+                        RailReady
+                    </ThemedText>
+                    <ThemedText className="text-lg text-center px-4">
                     by Jonáš Vondra - v1.0.0
                 </ThemedText>
 
@@ -29,7 +37,10 @@ export default function ExploreScreen() {
                     </ThemedText>
                     <TextInput
                         className="w-32 text-center"
-                        defaultValue="600"
+                        value={settings.timerStartSeconds}
+                        onChangeText={(t) =>
+                            updateSetting("timerStartSeconds", t)
+                        }
                         placeholder="Time in seconds"
                         keyboardType="numeric"
                     />
@@ -41,27 +52,33 @@ export default function ExploreScreen() {
                         V jaký časy mají chodit notifikace před odjezdem.
                         nastavení -1 notifikaci vypne
                     </ThemedText>
-                    <ThemedView className="flex-row">
+                    <ThemedView className="flex-row gap-6">
                         <ThemedView>
-                            <ThemedText className="text-sm mb-1 mr-10">
+                            <ThemedText className="text-sm mb-1">
                                 {" "}
                                 1. Notifikace{" "}
                             </ThemedText>
                             <TextInput
                                 className="w-24 text-center"
-                                defaultValue="600"
+                                value={settings.notification1}
+                                onChangeText={(t) =>
+                                    updateSetting("notification1", t)
+                                }
                                 placeholder="sekundy"
                                 keyboardType="numeric"
                             />
                         </ThemedView>
                         <ThemedView>
-                            <ThemedText className="text-sm mb-1 mr-10">
+                            <ThemedText className="text-sm mb-1">
                                 {" "}
                                 2. Notifikace{" "}
                             </ThemedText>
                             <TextInput
                                 className="w-24 text-center"
-                                defaultValue="300"
+                                value={settings.notification2}
+                                onChangeText={(t) =>
+                                    updateSetting("notification2", t)
+                                }
                                 placeholder="sekundy"
                                 keyboardType="numeric"
                             />
@@ -73,7 +90,10 @@ export default function ExploreScreen() {
                             </ThemedText>
                             <TextInput
                                 className="w-24 text-center"
-                                defaultValue="60"
+                                value={settings.notification3}
+                                onChangeText={(t) =>
+                                    updateSetting("notification3", t)
+                                }
                                 placeholder="sekundy"
                                 keyboardType="numeric"
                             />
@@ -96,7 +116,8 @@ export default function ExploreScreen() {
                     </ThemedText>
                     <TextInput
                         className="w-72"
-                        defaultValue="Praha-Kyje"
+                        value={settings.station}
+                        onChangeText={(t) => updateSetting("station", t)}
                         placeholder="Přesný název stanice"
                     />
 
@@ -110,7 +131,8 @@ export default function ExploreScreen() {
                     </ThemedText>
                     <TextInput
                         className="w-96"
-                        defaultValue="Praha Masarykovo nádr., Praha hl n., Karlštejn"
+                        value={settings.destinations}
+                        onChangeText={(t) => updateSetting("destinations", t)}
                         placeholder="Praha Masarykovo nádr., Praha hl n., Karlštejn"
                     />
 
@@ -127,7 +149,12 @@ export default function ExploreScreen() {
                             https://api.golemio.cz/api-keys/
                         </ExternalLink>
                     </ThemedText>
-                    <TextInput className="w-72" placeholder="Golemio API key" />
+                    <TextInput
+                        className="w-72"
+                        value={settings.golemioApiKey}
+                        onChangeText={(t) => updateSetting("golemioApiKey", t)}
+                        placeholder="Golemio API key"
+                    />
                 </ThemedView>
 
                 {/*Line*/}
@@ -144,10 +171,11 @@ export default function ExploreScreen() {
                 </ThemedView>
 
                 {/*Footer*/}
-                <ThemedText className="text-sm text-center mb-4">
+                <ThemedText className="text-sm text-center mb-24">
                     © 2026 Jonáš Vondra. Všechna práva vyhrazena. {"\n"}
                 </ThemedText>
             </ThemedView>
         </ScrollView>
+      </SafeAreaView>
     );
 }
