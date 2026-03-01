@@ -1,4 +1,4 @@
- import { ExpoConfig, ConfigContext } from 'expo/config';
+ import { ConfigContext, ExpoConfig } from 'expo/config';
 
 const IS_DEV = process.env.APP_VARIANT === 'development';
 
@@ -30,6 +30,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     predictiveBackGestureEnabled: false,
   },
   web: {
+    bundler: 'metro',
     output: 'static',
     favicon: IS_DEV ? './assets/AppIconDev.png' : './assets/AppIcon.png',
   },
