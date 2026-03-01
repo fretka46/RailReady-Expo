@@ -15,6 +15,9 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     supportsTablet: true,
     bundleIdentifier: IS_DEV ? 'cz.cvut.vondrjon.railready.dev' : 'cz.cvut.vondrjon.railready',
     icon: IS_DEV ? './assets/AppIconDev.png' : './assets/AppIcon.png',
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     adaptiveIcon: {
