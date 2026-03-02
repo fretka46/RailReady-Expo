@@ -1,0 +1,55 @@
+export default class Train {
+    public headsign: string;
+    public departureTime: Date;
+    public scheduledTime: Date;
+    public line: string;
+    public isDelayValid: boolean;
+    public delay_seconds: number;
+    public last_stop: string;
+    public id: string;
+
+    constructor(TrainData: Partial<Train>) {
+        this.headsign = TrainData.headsign || "";
+        this.departureTime = TrainData.departureTime ? new Date(TrainData.departureTime) : new Date();
+        this.scheduledTime = TrainData.scheduledTime ? new Date(TrainData.scheduledTime) : new Date();
+        this.line = TrainData.line || "";
+        this.isDelayValid = TrainData.isDelayValid || false;
+        this.delay_seconds = TrainData.delay_seconds || 0;
+        this.last_stop = TrainData.last_stop || "";
+        this.id = TrainData.id || "";
+    }
+
+    public departuresIn(): number {
+        const now = new Date();
+        const departureTimeWithDelay = new Date(this.departureTime.getTime() + this.delay_seconds * 1000);
+        return Math.max(0, Math.floor((departureTimeWithDelay.getTime() - now.getTime()) / 1000));
+    }
+
+    public toString(): string {
+        return `Train ${this.line}, ID: ${this.id}`;
+    }
+}
+
+// Global state for trains queue
+export let trains: Train[] = [];
+export let trainsBack: Train[] = [];
+
+export let currentTrainIndex: number = 0;
+export let isBack: boolean = false;
+
+export function getTrain(): Train | null {
+    try {
+        const currentArray = isBack ? trainsBack : trains;
+        if (currentTrainIndex >= 0 && currentTrainIndex < currentArray.length) {
+            return currentArray[currentTrainIndex];
+        } else {
+            console.warn(`IndexError: ${currentTrainIndex} out of range for trains array`);
+            currentTrainIndex = 0; // Reset index to prevent further errors
+            return null;
+        }
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
+}
+

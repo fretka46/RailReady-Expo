@@ -66,9 +66,7 @@ export const TrainClock: React.FC<TrainClockProps> = ({ secondsRemaining }) => {
                     strokeDashoffset={strokeDashoffset}
                     strokeLinecap="round"
                     fill="none"
-                    originX={CENTER}
-                    originY={CENTER}
-                    rotation="-90"
+                    transform={`rotate(-90 ${CENTER} ${CENTER})`}
                 />
             </Svg>
 
@@ -79,9 +77,7 @@ export const TrainClock: React.FC<TrainClockProps> = ({ secondsRemaining }) => {
                 >
                     {timeString}
                 </ThemedText>
-                <ThemedText className="text-sm mt-1">
-                    do odjezdu
-                </ThemedText>
+                <ThemedText className="text-sm mt-1">do odjezdu</ThemedText>
             </View>
         </View>
     );
