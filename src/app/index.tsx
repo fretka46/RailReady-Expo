@@ -7,7 +7,12 @@ import { isUpdating, updateData } from "@/modules/data-updater";
 import * as Train from "@/modules/train";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Platform, View } from "react-native";
+import {
+    ActivityIndicator,
+    Platform,
+    TouchableOpacity,
+    View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function IndexScreen() {
@@ -18,6 +23,13 @@ export default function IndexScreen() {
     const [currentTrain, setCurrentTrain] = useState<Train.default | null>(
         Train.getTrain(),
     );
+
+    const handleMoveIndex = (forward: boolean) => {
+        Train.moveIndex(forward);
+        const train = Train.getTrain();
+        setSeconds(train ? train.departuresIn() : 0);
+        setCurrentTrain(train);
+    };
 
     useEffect(() => {
         if (isLoading) return;
@@ -105,7 +117,33 @@ export default function IndexScreen() {
                         <View className="flex-1" />
                     </View>
 
-                    <TrainClock secondsRemaining={clockSeconds} />
+                    <View className="flex-row w-full items-center justify-center">
+                        <TouchableOpacity
+                            className="w-10 h-16 mr-8 rounded-md items-center justify-center"
+                            activeOpacity={0.2}
+                            onPress={() => handleMoveIndex(false)}
+                        >
+                            <FontAwesome6
+                                name="chevron-left"
+                                size={24}
+                                color={theme.text}
+                            />
+                        </TouchableOpacity>
+
+                        <TrainClock secondsRemaining={clockSeconds} />
+
+                        <TouchableOpacity
+                            className="w-10 h-16 ml-8 rounded-md items-center justify-center"
+                            activeOpacity={0.2}
+                            onPress={() => handleMoveIndex(true)}
+                        >
+                            <FontAwesome6
+                                name="chevron-right"
+                                size={24}
+                                color={theme.text}
+                            />
+                        </TouchableOpacity>
+                    </View>
                 </ThemedView>
 
                 <ThemedText className="text-2xl flex-row text-center">
@@ -125,12 +163,12 @@ export default function IndexScreen() {
                     Last stop: {currentTrain?.last_stop || "N/A"}
                 </ThemedText>
 
-                {(!currentTrain?.isDelayValid) && (
+                {!currentTrain?.isDelayValid && (
                     <ThemedText className="text-sm mt-4 text-center text-red-400">
-                        Zpoždění není aktuální! {"\n"} Odjel vlak z výchozí stanice?
+                        Zpoždění není aktuální! {"\n"} Odjel vlak z výchozí
+                        stanice?
                     </ThemedText>
                 )}
-
             </SafeAreaView>
         </ThemedView>
     );

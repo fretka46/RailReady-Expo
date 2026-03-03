@@ -65,3 +65,15 @@ export function getTrain(): Train | null {
     }
 }
 
+export function moveIndex(forward: boolean) {
+    const currentArray = isBack ? trainsBack : trains;
+    const maxIndex = currentArray.length - 1;
+
+    if (forward) {
+        currentTrainIndex = currentTrainIndex < maxIndex ? currentTrainIndex + 1 : currentTrainIndex;
+    } else {
+        currentTrainIndex = currentTrainIndex > 0 ? currentTrainIndex - 1 : currentTrainIndex;
+    }
+
+    console.log(`Moved index ${forward ? "forward" : "backward"} to ${currentTrainIndex}`);
+}
