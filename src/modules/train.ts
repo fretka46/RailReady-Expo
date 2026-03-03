@@ -1,12 +1,15 @@
 export default class Train {
     public headsign: string;
+    /** The time when the train is actually departing  WITH DELAY INCLUDED*/
     public departureTime: Date;
+    /** The time when the train is scheduled to depart */
     public scheduledTime: Date;
     public line: string;
     public isDelayValid: boolean;
     public delay_seconds: number;
     public last_stop: string;
     public id: string;
+    public hasOldData: boolean;
 
     constructor(TrainData: Partial<Train>) {
         this.headsign = TrainData.headsign || "";
@@ -17,11 +20,12 @@ export default class Train {
         this.delay_seconds = TrainData.delay_seconds || 0;
         this.last_stop = TrainData.last_stop || "";
         this.id = TrainData.id || "";
+        this.hasOldData = TrainData.hasOldData || false;
     }
 
     public departuresIn(): number {
         const now = new Date();
-        const departureTimeWithDelay = new Date(this.departureTime.getTime() + this.delay_seconds * 1000);
+        const departureTimeWithDelay = new Date(this.departureTime.getTime());
         return Math.max(0, Math.floor((departureTimeWithDelay.getTime() - now.getTime()) / 1000));
     }
 
@@ -90,6 +94,11 @@ export function moveIndex(forward: boolean) {
     }
 
     console.log(`Moved index ${forward ? "forward" : "backward"} to ${currentTrainIndex}`);
+}
+
+export function setIndex(index: number) {
+    const currentArray = isBack ? trainsBack : trains;
+    currentTrainIndex = Math.max(0, Math.min(index, currentArray.length - 1));
 }
 
 export function toggleIsBack() {

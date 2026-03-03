@@ -32,8 +32,9 @@ export const TrainClock: React.FC<TrainClockProps> = ({ secondsRemaining }) => {
     const trackColor = colorScheme === "dark" ? "#333333" : "#e5e5ea";
 
     const getIndicatorColor = () => {
-        if (isTimeUp || currentSeconds <= 60) return "#ef4444"; // red
+        if (isTimeUp || currentSeconds <= 120) return "#ef4444"; // red
         if (currentSeconds <= 180) return "#f59e0b"; // orange
+        if (currentSeconds <= 300) return "#10b981"; // green
         return "#3b82f6"; // blue
     };
 
