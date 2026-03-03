@@ -75,12 +75,11 @@ export async function updateData(settings: Settings) {
 
             for (const departure of data.departures) {
                 const params: Partial<Train> = {
-                    headsign: departure.trip.headsign,
+                    headsign: displayFix(departure.trip.headsign),
                     departureTime: new Date(departure.departure_timestamp.predicted),
                     line: departure.route.short_name,
                     delay_seconds: departure.delay.seconds || 0,
                     isDelayValid: departure.delay.is_available,
-                    // Tady si pripadne pridej display_fix pokud ho budes potrebovat
                     last_stop: departure.last_stop.name,
                     scheduledTime: new Date(departure.departure_timestamp.scheduled),
                     id: departure.trip.id,
@@ -106,3 +105,13 @@ export async function updateData(settings: Settings) {
     }
 
 }   
+
+function displayFix(headsign: string): string {
+
+    if (headsign == "hr.VUSC 0100/0200 04") {
+        return "Uvaly - Stamberk";
+    } else if (headsign == "P.Běchovice-Blatov") {
+        return "Bechovice - Blatov";
+    }
+    return headsign;
+}
