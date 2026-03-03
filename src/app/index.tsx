@@ -23,9 +23,39 @@ export default function IndexScreen() {
     const [currentTrain, setCurrentTrain] = useState<Train.default | null>(
         Train.getTrain(),
     );
+    const [trainIndex, setTrainIndex] = useState<number>(0);
+    const [isBack, setIsBack] = useState<boolean>(Train.isBack);
+
+    const handleSwitchDirection = () => {
+        Train.toggleIsBack();
+        setIsBack(Train.isBack);
+        setTrainIndex(0);
+        const train = Train.getTrain();
+        setSeconds(train ? train.departuresIn() : 0);
+        setCurrentTrain(train);
+    };
 
     const handleMoveIndex = (forward: boolean) => {
+        const currentIndex = Train.currentTrainIndex;
+        const currentLength = Train.isBack
+            ? Train.trainsBack.length
+            : Train.trains.length;
+        const isLastIndex = currentIndex >= currentLength - 1;
+        const isFirstIndex = currentIndex <= 0;
+
+        console.debug("Attempting to move index", {
+            forward,
+            isLastIndex,
+            isFirstIndex,
+            currentIndex,
+            currentLength,
+            isBack: Train.isBack,
+        });
+
+        if ((forward && isLastIndex) || (!forward && isFirstIndex)) return;
+
         Train.moveIndex(forward);
+        setTrainIndex(Train.currentTrainIndex);
         const train = Train.getTrain();
         setSeconds(train ? train.departuresIn() : 0);
         setCurrentTrain(train);
@@ -34,18 +64,18 @@ export default function IndexScreen() {
     useEffect(() => {
         if (isLoading) return;
 
-        updateData(settings);
-        const train = Train.getTrain();
-        setSeconds(train ? train.departuresIn() : 0);
-        setCurrentTrain(train);
-
-        const trainInterval = setInterval(() => {
-            updateData(settings);
+        const loadData = async () => {
+            await updateData(settings);
             const train = Train.getTrain();
+            setTrainIndex(Train.currentTrainIndex);
             setSeconds(train ? train.departuresIn() : 0);
             setCurrentTrain(train);
+        };
 
-            // Refresh interval
+        loadData();
+
+        const trainInterval = setInterval(() => {
+            loadData();
         }, 21000);
 
         return () => clearInterval(trainInterval);
@@ -71,7 +101,7 @@ export default function IndexScreen() {
             <SafeAreaView className="flex-1">
                 {/* Refresh indicator */}
                 {isUpdating && (
-                    <View className="absolute top-4 right-6 z-10">
+                    <View className="absolute top-40 right-6 z-10">
                         <ActivityIndicator size="large" color="#888" />
                         <ThemedText className="text-sm mt-1">
                             Updating
@@ -79,13 +109,18 @@ export default function IndexScreen() {
                     </View>
                 )}
 
-                <ThemedView className="mb-12 items-center">
-                    <ThemedText className="text-2xl font-bold">
+                <ThemedView className="mb-12 items-center w-full">
+                    <ThemedText className="text-2xl font-bold text-center">
                         {settings.station}
                     </ThemedText>
+                    
+                    <ThemedText className="text-sm font-medium">
+                        {trainIndex + 1} / {isBack ? Train.trainsBack.length : Train.trains.length}
+                    </ThemedText>
+                    
 
                     {/*Line*/}
-                    <View className="w-96 h-px bg-gray-300 dark:bg-gray-700 mt-4 mb-12" />
+                    <View className="w-96 h-px bg-gray-300 dark:bg-gray-700 mt-6 mb-12" />
 
                     <ThemedText className="text-7xl font-bold">
                         {currentTrain?.line || "N/A"}
@@ -163,12 +198,20 @@ export default function IndexScreen() {
                     Last stop: {currentTrain?.last_stop || "N/A"}
                 </ThemedText>
 
-                {!currentTrain?.isDelayValid && (
-                    <ThemedText className="text-sm mt-4 text-center text-red-400">
-                        Zpoždění není aktuální! {"\n"} Odjel vlak z výchozí
-                        stanice?
+                <ThemedText
+                    className={`text-sm mt-4 text-center text-red-400 ${currentTrain && !currentTrain?.isDelayValid ? "opacity-100" : "opacity-0"}`}
+                >
+                    Zpoždění není aktuální! {"\n"} Odjel vlak z výchozí stanice?
+                </ThemedText>
+
+                <TouchableOpacity
+                    className={`mt-12 px-10 py-5 rounded-md self-center ${isBack ? "bg-green-500" : "bg-blue-500"}`}
+                    onPress={handleSwitchDirection}
+                >
+                    <ThemedText>
+                        <FontAwesome6 name="arrow-right-arrow-left" size={24} />
                     </ThemedText>
-                )}
+                </TouchableOpacity>
             </SafeAreaView>
         </ThemedView>
     );

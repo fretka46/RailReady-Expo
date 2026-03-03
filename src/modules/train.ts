@@ -49,16 +49,30 @@ export let trainsBack: Train[] = [];
 export let currentTrainIndex: number = 0;
 export let isBack: boolean = false;
 
+export function getCurrentIndex(): number {
+    return currentTrainIndex;
+}
+
 export function getTrain(): Train | null {
     try {
         const currentArray = isBack ? trainsBack : trains;
-        if (currentTrainIndex >= 0 && currentTrainIndex < currentArray.length) {
-            return currentArray[currentTrainIndex];
-        } else {
-            console.warn(`IndexError: ${currentTrainIndex} out of range for trains array`);
-            currentTrainIndex = 0; // Reset index to prevent further errors
+        
+        if (currentArray.length === 0) {
+            currentTrainIndex = 0;
             return null;
         }
+
+        // Clamp index if out of bounds (e.g. data update reduced list size)
+        if (currentTrainIndex >= currentArray.length) {
+            console.warn(`Index adjustment: ${currentTrainIndex} >= ${currentArray.length}. Clamping to ${currentArray.length - 1}.`);
+            currentTrainIndex = currentArray.length - 1;
+        }
+
+        if (currentTrainIndex < 0) {
+             currentTrainIndex = 0;
+        }
+
+        return currentArray[currentTrainIndex];
     } catch (error) {
         console.error(error);
         return null;
@@ -76,4 +90,10 @@ export function moveIndex(forward: boolean) {
     }
 
     console.log(`Moved index ${forward ? "forward" : "backward"} to ${currentTrainIndex}`);
+}
+
+export function toggleIsBack() {
+    isBack = !isBack;
+    currentTrainIndex = 0;
+    console.log(`Switched direction to ${isBack ? "Back" : "Forward"}`);
 }

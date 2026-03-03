@@ -62,8 +62,7 @@ export async function updateData(settings: Settings) {
         const data = await response.json();
 
 
-        console.log("Data fetched successfully");
-        console.log("Departures received:", data.departures ? data.departures.length : 0);
+        console.log("Succesfully received:", data.departures ? data.departures.length : 0 + " departures");
 
         if (data.departures && data.departures.length > 0) {
             // Vyprázdnění starých dat
@@ -71,7 +70,6 @@ export async function updateData(settings: Settings) {
             trainsBack.length = 0;
 
             const primary_destinations = settings.destinations.split(",").map((dest) => dest.trim());
-            console.debug("Primary destinations:", primary_destinations);
 
             for (const departure of data.departures) {
                 const params: Partial<Train> = {

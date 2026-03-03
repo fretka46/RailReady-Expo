@@ -17,7 +17,7 @@ const defaultSettings: Settings = {
     notification2: "300",
     notification3: "60",
     station: "Praha-Kyje",
-    destinations: "Praha Masarykovo nádr., Praha hl n., Karlštejn",
+    destinations: "Praha Masarykovo nádraží, Praha hl.n., Karlštejn",
     golemioApiKey: "",
 };
 

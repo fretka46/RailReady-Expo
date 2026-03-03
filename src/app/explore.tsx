@@ -104,13 +104,12 @@ export default function ExploreScreen() {
                         Sledovaná stanice
                     </ThemedText>
                     <ThemedText className="text-sm mb-2">
-                        Přesný název stanice, kterou chcete sledovat. (např.
-                        "Praha hl.n."). Seznam stanic najdete na{" "}
+                        Přesný název stanice, kterou chcete sledovat. {"\n"} Seznam stanic najdete na{" "}
                         <ExternalLink
                             className="text-blue-500 underline"
-                            href="http://programs46.9e.cz/railready/stops.txt"
+                            href="https://railready.fretka.me/stops.txt"
                         >
-                            https://railready.fretka.me/
+                            https://railready.fretka.me/stops.txt
                         </ExternalLink>
                         {"\n"}(použijte vyhledávání v prohlížeči)
                     </ThemedText>
@@ -133,7 +132,7 @@ export default function ExploreScreen() {
                         className="w-96"
                         value={settings.destinations}
                         onChangeText={(t) => updateSetting("destinations", t)}
-                        placeholder="Praha Masarykovo nádr., Praha hl n., Karlštejn"
+                        placeholder="Praha Masarykovo nádraží, Praha hl.n., Karlštejn"
                     />
 
                     <ThemedText className="mt-10 text-2xl font-bold">
