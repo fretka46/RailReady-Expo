@@ -31,7 +31,7 @@ export default function IndexScreen() {
             setCurrentTrain(train);
 
             // Refresh interval
-        }, 1000);
+        }, 21000);
 
         return () => clearInterval(trainInterval);
     }, [isLoading, settings]);
