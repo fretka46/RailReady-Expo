@@ -25,6 +25,18 @@ export default class Train {
         return Math.max(0, Math.floor((departureTimeWithDelay.getTime() - now.getTime()) / 1000));
     }
 
+    public formattedDelay(): string {
+        if (!this.isDelayValid) return "00:00";
+        let sign = "";
+        if (this.delay_seconds > 0) sign = "+";
+        else if (this.delay_seconds < 0) sign = "-";
+
+        const absDelay = Math.abs(this.delay_seconds);
+        const minutes = Math.floor(absDelay / 60);
+        const seconds = absDelay % 60;
+        return `${sign}${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
     public toString(): string {
         return `Train ${this.line}, ID: ${this.id}`;
     }
