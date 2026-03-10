@@ -8,7 +8,6 @@ export interface Settings {
     notification3: string;
     station: string;
     destinations: string;
-    golemioApiKey: string;
 }
 
 const defaultSettings: Settings = {
@@ -18,7 +17,6 @@ const defaultSettings: Settings = {
     notification3: "60",
     station: "Praha-Kyje",
     destinations: "Praha Masarykovo nádraží, Praha hl.n., Karlštejn",
-    golemioApiKey: "",
 };
 
 interface SettingsContextData {

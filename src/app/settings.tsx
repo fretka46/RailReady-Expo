@@ -4,11 +4,47 @@ import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { useSettings } from "@/context/settings-context";
 import { Image } from "expo-image";
+import { useEffect, useState } from "react";
 import { Platform, ScrollView, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ExploreScreen() {
     const { settings, updateSetting, isLoading } = useSettings();
+    const [serverStatus, setServerStatus] = useState("unknown");
+
+    // Check server status on load
+    useEffect(() => {
+        const checkServerStatus = async () => {
+            try {
+                console.debug("Checking API server status...");
+
+                const response = await fetch("https://api.railready.fretka.me/status");
+                const data = await response.json();
+
+                // Update server status
+                console.log("API server status:", data.golemio);
+
+                switch (data.golemio) {
+                    case "online":
+                        setServerStatus("Online ✅"); 
+                        break;
+                    case "degraded":
+                        setServerStatus("Prague API down! ⚠️");
+                        break;
+                    case "offline":
+                        setServerStatus("Offline ❌");
+                        break;
+                    default:
+                        setServerStatus("Unknown 🤔");
+                }
+
+            } catch (error) {
+                console.error("Failed to check server status", error);
+                setServerStatus("Offline ❌");
+            }
+        };
+        checkServerStatus();
+    }, []);
 
     // Pokud se data načítají, můžeme zatím ukázat prázdnou obrazovku
     if (isLoading) return null;
@@ -146,32 +182,17 @@ export default function ExploreScreen() {
                             }
                             placeholder="Praha Masarykovo nádraží, Praha hl.n., Karlštejn"
                         />
-
-                        <ThemedText className="mt-10 text-2xl font-bold">
-                            Golemio API key
-                        </ThemedText>
-                        <ThemedText className="text-sm mb-2">
-                            Vygenerovaný klíč k golemio API. Získat ho můžete
-                            zde: {"\n"}
-                            <ExternalLink
-                                className="text-blue-500 underline"
-                                href="https://api.golemio.cz/api-keys/"
-                            >
-                                https://api.golemio.cz/api-keys/
-                            </ExternalLink>
-                        </ThemedText>
-                        <TextInput
-                            className="w-72"
-                            value={settings.golemioApiKey}
-                            onChangeText={(t) =>
-                                updateSetting("golemioApiKey", t)
-                            }
-                            placeholder="Golemio API key"
-                        />
                     </ThemedView>
 
+                    <ThemedText className="mt-8 text-1xl font-bold">
+                            RailReady API status
+                    </ThemedText>
+                    <ThemedText>
+                            {serverStatus}
+                    </ThemedText>
+
                     {/*Line*/}
-                    <View className="w-96 h-px bg-gray-300 dark:bg-gray-700 mt-12" />
+                    <View className="w-96 h-px bg-gray-300 dark:bg-gray-700 mt-4" />
 
                     {/*Image*/}
                     <ThemedView className="w-64 h-64 bg-gray-300 dark:bg-gray-700 rounded-full items-center justify-center mt-10">

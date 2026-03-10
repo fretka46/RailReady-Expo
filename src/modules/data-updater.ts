@@ -27,32 +27,16 @@ export async function updateData(settings: Settings) {
 
     isUpdating = true;
 
-    // Generate URL
-    const url = `https://api.golemio.cz/v2/pid/departureboards`;
+    const url = `https://api.railready.fretka.me/`;
 
     const params = new URLSearchParams({
-        //"ids": "U1051Z301",
-        "names": settings.station,
-        "minutesBefore": "0",
-        "minutesAfter": "60",
-        "preferredTimezone": "Europe/Prague",
-        "mode": "departures",
-        "order": "real",
-        "filter": "routeOnceFill",
-        "skip": "canceled",
-        "limit": "40",
-        "offset": "0"
-    })
+        "station": settings.station
+    });
 
     const fullUrl = `${url}?${params.toString()}`;
 
-
     try {
-        const response = await fetch(fullUrl, {
-            headers: {
-                "X-Access-Token": settings.golemioApiKey,
-            },
-        });
+        const response = await fetch(fullUrl);
 
         if (!response.ok) {
             console.warn(`Unexpected status: ${response.status}`);
@@ -61,7 +45,6 @@ export async function updateData(settings: Settings) {
         }
 
         const data = await response.json();
-
 
         console.log("Succesfully received:", data.departures ? data.departures.length : 0 + " departures");
 
@@ -78,14 +61,14 @@ export async function updateData(settings: Settings) {
 
             for (const departure of data.departures) {
                 const params: Partial<Train.default> = {
-                    headsign: displayFix(departure.trip.headsign),
-                    departureTime: new Date(departure.departure_timestamp.predicted),
-                    line: departure.route.short_name,
-                    delay_seconds: departure.delay.seconds || 0,
-                    isDelayValid: departure.delay.is_available,
-                    last_stop: departure.last_stop.name,
-                    scheduledTime: new Date(departure.departure_timestamp.scheduled),
-                    id: departure.trip.id,
+                    headsign: displayFix(departure.headsign),
+                    departureTime: new Date(departure.departureTime),
+                    line: departure.line,
+                    delay_seconds: departure.delay_seconds || 0,
+                    isDelayValid: departure.isDelayValid,
+                    last_stop: departure.last_stop,
+                    scheduledTime: new Date(departure.scheduledTime),
+                    id: departure.id,
                 };
 
                 const newTrain = new Train.default(params);
@@ -100,7 +83,7 @@ export async function updateData(settings: Settings) {
                     }
                 }
 
-                if (primary_destinations.includes(departure.trip.headsign)) {
+                if (primary_destinations.includes(departure.headsign)) {
                     trains.push(newTrain);
                 } else {
                     trainsBack.push(newTrain);
