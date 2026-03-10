@@ -57,8 +57,6 @@ export async function updateData(settings: Settings) {
             trains.length = 0;
             trainsBack.length = 0;
 
-            const primary_destinations = settings.destinations.split(",").map((dest) => dest.trim());
-
             for (const departure of data.departures) {
                 const params: Partial<Train.default> = {
                     headsign: displayFix(departure.headsign),
@@ -83,7 +81,7 @@ export async function updateData(settings: Settings) {
                     }
                 }
 
-                if (primary_destinations.includes(departure.headsign)) {
+                if (departure.direction === false) {
                     trains.push(newTrain);
                 } else {
                     trainsBack.push(newTrain);
@@ -92,6 +90,9 @@ export async function updateData(settings: Settings) {
             }
         } else {
             console.log("No departures found");
+            // Clear existing data if no departures are returned to avoid showing stale data
+            trains.length = 0;
+            trainsBack.length = 0;
         }
     } catch (error) {
         console.error("Error fetching data:", error);

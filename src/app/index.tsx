@@ -17,9 +17,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function IndexScreen() {
     // Získání přístupu k nastavení
-    const { settings, isLoading } = useSettings();
+    const { settings, isLoading, updateSetting } = useSettings();
     const theme = useTheme();
     const [clockSeconds, setSeconds] = useState<number>(0);
+    const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [currentTrain, setCurrentTrain] = useState<Train.default | null>(
         Train.getTrain(),
     );
@@ -109,18 +110,53 @@ export default function IndexScreen() {
                     </View>
                 )}
 
-                <ThemedView className="mb-12 items-center w-full">
-                    <ThemedText className="text-2xl font-bold text-center">
-                        {settings.station}
+                <ThemedView className="mb-12 items-center w-full z-50">
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        onPress={() => setIsDropdownOpen(!isDropdownOpen)}
+                        className="flex-row items-center gap-2 px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-lg"
+                    >
+                        <ThemedText className="text-2xl font-bold text-center">
+                            {settings.station}
+                        </ThemedText>
+                        <FontAwesome6
+                            name={
+                                isDropdownOpen ? "chevron-up" : "chevron-down"
+                            }
+                            size={16}
+                            color={theme.text}
+                        />
+                    </TouchableOpacity>
+
+                    {isDropdownOpen && (
+                        <View
+                            className="absolute top-14 w-64 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+                            style={{ zIndex: 100, elevation: 5 }}
+                        >
+                            {settings.stationPresets.map((preset) => (
+                                <TouchableOpacity
+                                    key={preset}
+                                    className={`px-4 py-3 border-b border-gray-100 dark:border-gray-700 ${preset === settings.station ? "bg-blue-100 dark:bg-blue-900" : ""}`}
+                                    onPress={() => {
+                                        updateSetting("station", preset);
+                                        setIsDropdownOpen(false);
+                                    }}
+                                >
+                                    <ThemedText className="text-center text-lg">
+                                        {preset}
+                                    </ThemedText>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+
+                    <ThemedText className="text-sm font-medium mt-2">
+                        {trainIndex + 1} /{" "}
+                        {isBack ? Train.trainsBack.length : Train.trains.length}
                     </ThemedText>
-                    
-                    <ThemedText className="text-sm font-medium">
-                        {trainIndex + 1} / {isBack ? Train.trainsBack.length : Train.trains.length}
-                    </ThemedText>
-                    
 
                     {/*Line*/}
-                    <View className="w-96 h-px bg-gray-300 dark:bg-gray-700 mt-6 mb-12" />
+                    <View className="w-96 h-px bg-gray-300 dark:bg-gray-700 mt-4 mb-4" />
 
                     <ThemedText className="text-7xl font-bold">
                         {currentTrain?.line || "N/A"}

@@ -7,7 +7,7 @@ export interface Settings {
     notification2: string;
     notification3: string;
     station: string;
-    destinations: string;
+    stationPresets: Array<string>;
 }
 
 const defaultSettings: Settings = {
@@ -16,7 +16,11 @@ const defaultSettings: Settings = {
     notification2: "300",
     notification3: "60",
     station: "Praha-Kyje",
-    destinations: "Praha Masarykovo nádraží, Praha hl.n., Karlštejn",
+    stationPresets: [
+        "Praha-Kyje",
+        "Praha hl.n.",
+        "Praha Masarykovo nádraží",
+    ]
 };
 
 interface SettingsContextData {
