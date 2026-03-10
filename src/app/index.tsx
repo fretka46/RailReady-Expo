@@ -99,7 +99,7 @@ export default function IndexScreen() {
         <ThemedView
             className={`flex-1 ${Platform.OS === "web" ? "pt-20" : ""}`}
         >
-            <SafeAreaView className="flex-1">
+            <SafeAreaView edges={["left", "right", "top", "bottom"]} className="flex-1">
                 {/* Refresh indicator */}
                 {isUpdating && (
                     <View className="absolute top-40 right-6 z-10">
@@ -241,7 +241,7 @@ export default function IndexScreen() {
                 </ThemedText>
 
                 <TouchableOpacity
-                    className={`mt-12 px-10 py-5 rounded-md self-center ${isBack ? "bg-green-500" : "bg-blue-500"}`}
+                    className={`mt-8 px-10 py-5 rounded-md self-center ${isBack ? "bg-green-500" : "bg-blue-500"}`}
                     onPress={handleSwitchDirection}
                 >
                     <ThemedText>
