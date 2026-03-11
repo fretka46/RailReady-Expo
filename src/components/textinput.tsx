@@ -1,18 +1,48 @@
-﻿import React, { forwardRef } from "react";
+﻿import React, { forwardRef, useState, useEffect, useRef } from "react";
 import {
     TextInput as RNTextInput,
     TextInputProps,
     useColorScheme,
 } from "react-native";
 
-export const TextInput = forwardRef<RNTextInput, TextInputProps>(
-    ({ className, placeholderTextColor, ...props }, ref) => {
-        // Získáme aktuální systémové téma, abychom mohli přizpůsobit nativní prvky
-        const colorScheme = useColorScheme();
+export interface CustomTextInputProps extends TextInputProps {
+    /** 
+     * Time (in ms) to wait after typing stops before calling onChangeText.
+     * Default is 1200ms. Set to 0 to disable debouncing.
+     */
+    debounceDelay?: number;
+}
 
-        // Typické barvy placeholderu pro iOS
-        const defaultPlaceholderColor =
-            colorScheme === "dark" ? "#98989f" : "#8e8e93";
+export const TextInput = forwardRef<RNTextInput, CustomTextInputProps>(
+    ({ className, placeholderTextColor, debounceDelay = 1200, value, onChangeText, ...props }, ref) => {
+        const colorScheme = useColorScheme();
+        const defaultPlaceholderColor = colorScheme === "dark" ? "#98989f" : "#8e8e93";
+
+        // Lokální state pro plynulé psaní
+        const [localValue, setLocalValue] = useState(value as string | undefined);
+        const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+        // Kdykoliv se změní hodnota "zvenčí" (například kliknutím na předvolbu),
+        // propíšeme ji i do lokálního stavu.
+        useEffect(() => {
+            if (value !== undefined && value !== localValue) {
+                setLocalValue(value as string);
+            }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        }, [value]);
+
+        const handleChangeText = (text: string) => {
+            setLocalValue(text);
+            
+            if (debounceDelay > 0) {
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+                timeoutRef.current = setTimeout(() => {
+                    onChangeText && onChangeText(text);
+                }, debounceDelay);
+            } else {
+                onChangeText && onChangeText(text);
+            }
+        };
 
         return (
             <RNTextInput
@@ -27,6 +57,9 @@ export const TextInput = forwardRef<RNTextInput, TextInputProps>(
                 }
                 // Nativní klávesnice pro iOS se zbarví zčerna/do běla
                 keyboardAppearance={colorScheme === "dark" ? "dark" : "light"}
+                // Přepsané values pro Debounce chování
+                value={localValue}
+                onChangeText={handleChangeText}
                 // Omezí nechtěné blikání autokorekce do jiných barev atp.
                 {...props}
             />

@@ -43,12 +43,12 @@ export function FilterSettings() {
             <TextInput
                 className="w-full mb-4"
                 value={settings.filterOptions.preferedLines.join(", ")}
-                onChangeText={(t) =>
+                onChangeText={(t) => {
                     updateSetting("filterOptions", {
                         ...settings.filterOptions,
                         preferedLines: t.trim() === "" ? [] : t.split(",").map((s) => s.trim()).filter((s) => s !== ""),
-                    })
-                }
+                    });
+                }}
                 placeholder="Preferované linky (S1, 177, C, B, ...)"
             />
             

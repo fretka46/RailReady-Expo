@@ -152,9 +152,7 @@ export default function ExploreScreen() {
                             <TextInput
                                 className="max-w-72 flex-1"
                                 value={settings.station}
-                                onChangeText={(t) =>
-                                    updateSetting("station", t)
-                                }
+                                onChangeText={(t) => updateSetting("station", t)}
                                 placeholder="Přesný název stanice"
                             />
 
@@ -244,9 +242,7 @@ export default function ExploreScreen() {
                         <TextInput
                             className="max-w-72 text-center"
                             value={settings.timerStartSeconds}
-                            onChangeText={(t) =>
-                                updateSetting("timerStartSeconds", t)
-                            }
+                            onChangeText={(t) => updateSetting("timerStartSeconds", t)}
                             placeholder="Time in seconds"
                             keyboardType="numeric"
                         />
