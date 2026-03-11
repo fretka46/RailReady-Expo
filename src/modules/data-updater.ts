@@ -2,6 +2,7 @@ import { Settings } from "@/context/settings-context";
 import * as Network from "expo-network";
 import { trains, trainsBack } from "./train";
 import * as Train from "./train";
+import VehicleType from "@/constants/vehicleType";
 
 export let isUpdating: boolean = false;
 
@@ -62,6 +63,7 @@ export async function updateData(settings: Settings) {
                     headsign: displayFix(departure.headsign),
                     departureTime: new Date(departure.departureTime),
                     line: departure.line,
+                    vehicleType: departure.vehicleType ?? VehicleType.Unknown,
                     delay_seconds: departure.delay_seconds || 0,
                     isDelayValid: departure.isDelayValid,
                     last_stop: departure.last_stop,
@@ -70,6 +72,24 @@ export async function updateData(settings: Settings) {
                 };
 
                 const newTrain = new Train.default(params);
+
+                // Check filtering options
+                if (settings.filterOptions.filtersEnabled) {
+                    const lineMatch = settings.filterOptions.preferedLines.length === 0 || 
+                    settings.filterOptions.preferedLines.includes(newTrain.line);
+                    
+                    const typeMatch =
+                        (settings.filterOptions.SLineTrains && newTrain.vehicleType === VehicleType.Train && newTrain.line.startsWith("S")) ||
+                        (settings.filterOptions.otherTrains && newTrain.vehicleType === VehicleType.Train && !newTrain.line.startsWith("S")) ||
+                        (settings.filterOptions.buses && newTrain.vehicleType === VehicleType.Bus) ||
+                        (settings.filterOptions.trams && newTrain.vehicleType === VehicleType.Tram) ||
+                        (settings.filterOptions.metro && newTrain.vehicleType === VehicleType.Metro) ||
+                        (settings.filterOptions.nightLines && newTrain.isNightLine);
+
+                    if (!lineMatch || !typeMatch) {
+                        continue; // Skip this if it doesn't match filters
+                    }
+                }
 
                 if (newTrain.isDelayValid == false) {
                     // Pokus o získání zpoždění z předchozího stavu, pokud je dostupný

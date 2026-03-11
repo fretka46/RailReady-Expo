@@ -1,4 +1,5 @@
 import { ExternalLink } from "@/components/external-link";
+import { FilterSettings } from "@/components/filter-settings";
 import { TextInput } from "@/components/textinput";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -228,6 +229,9 @@ export default function ExploreScreen() {
                                 </View>
                             ))}
                         </ThemedView>
+
+                        {/* -- Filter settings -- */}
+                        <FilterSettings />
 
                         <ThemedText className="text-2xl font-bold mt-8">
                             Začátek odpočtu časovače

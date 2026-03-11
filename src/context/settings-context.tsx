@@ -8,6 +8,7 @@ export interface Settings {
     notification3: string;
     station: string;
     stationPresets: Array<string>;
+    filterOptions: FilterOptions;
 }
 
 const defaultSettings: Settings = {
@@ -20,8 +21,30 @@ const defaultSettings: Settings = {
         "Praha-Kyje",
         "Praha hl.n.",
         "Praha Masarykovo nádraží",
-    ]
+    ],
+    filterOptions: {
+        filtersEnabled: false,
+        preferedLines: [],
+        SLineTrains: true,
+        otherTrains: true,
+        buses: true,
+        trams: true,
+        metro: true,
+        nightLines: true,
+    }
 };
+
+interface FilterOptions {
+    filtersEnabled: boolean;
+    preferedLines: string[];
+    SLineTrains: boolean;
+    otherTrains: boolean;
+    buses: boolean;
+    trams: boolean;
+    metro: boolean;
+    nightLines: boolean;
+}
+
 
 interface SettingsContextData {
     settings: Settings;

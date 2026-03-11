@@ -1,3 +1,5 @@
+import VehicleType from "@/constants/vehicleType";
+
 export default class Train {
     public headsign: string;
     /** The time when the train is actually departing  WITH DELAY INCLUDED*/
@@ -5,17 +7,22 @@ export default class Train {
     /** The time when the train is scheduled to depart */
     public scheduledTime: Date;
     public line: string;
+    public vehicleType: VehicleType;
+    public isNightLine: boolean;
     public isDelayValid: boolean;
     public delay_seconds: number;
     public last_stop: string;
     public id: string;
     public hasOldData: boolean;
 
+
     constructor(TrainData: Partial<Train>) {
         this.headsign = TrainData.headsign || "";
         this.departureTime = TrainData.departureTime ? new Date(TrainData.departureTime) : new Date();
         this.scheduledTime = TrainData.scheduledTime ? new Date(TrainData.scheduledTime) : new Date();
         this.line = TrainData.line || "";
+        this.vehicleType = TrainData.vehicleType ?? VehicleType.Unknown;
+        this.isNightLine = TrainData.isNightLine || false;
         this.isDelayValid = TrainData.isDelayValid || false;
         this.delay_seconds = TrainData.delay_seconds || 0;
         this.last_stop = TrainData.last_stop || "";
